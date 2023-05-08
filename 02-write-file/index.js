@@ -9,6 +9,8 @@ const rl = readline.createInterface({
   prompt: 'Введите текст: ',
 });
 
+fs.createWriteStream(fileName, { flags: 'a' });
+
 rl.prompt();
 
 rl.on('line', (input) => {
@@ -18,20 +20,12 @@ rl.on('line', (input) => {
     process.exit(0);
   }
 
-  if (!fileName) {
-    fs.writeFile(fileName, input, (err) => {
-      if (err) throw err;
-      fileExists = true;
-      console.log(`Текст "${input}" успешно записан в файл ${fileName}`);
-      rl.prompt();
-    });
-  } else {
-    fs.appendFile(fileName, `\n${input}`, (err) => {
-      if (err) throw err;
-      console.log(`Текст "${input}" успешно добавлен в файл ${fileName}`);
-      rl.prompt();
-    });
-  }
+  fs.appendFile(fileName, `\n${input}`, (err) => {
+    if (err) throw err;
+    console.log(`Текст "${input}" успешно добавлен в файл ${fileName}`);
+    rl.prompt();
+  });
+
 });
 
 rl.on('SIGINT', () => {
