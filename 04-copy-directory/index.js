@@ -1,20 +1,26 @@
 const fs = require('fs');
 const path = require('path');
-const filesСopyFolder = path.join(__dirname, 'files-copy');
+const assetsPath = path.join(__dirname, 'files');
+const distPathAssets = path.join(__dirname, 'files-copy');
 
+async function copyFolderAsync(srcPath, destPath) {
+  await fs.promises.rm(destPath, { recursive: true, force: true });
+  await fs.promises.mkdir(destPath, { recursive: true });
 
-const copyDir = async () => {
-  await fs.promises.rm(filesСopyFolder, { recursive: true, force: true });
-  await fs.promises.mkdir(filesСopyFolder, { recursive: true });
-
-  const files = await fs.promises.readdir('04-copy-directory/files');
+  const files = await fs.promises.readdir(srcPath);
 
   for (const file of files) {
-    const source = path.join('04-copy-directory/files', file);
-    const destination = path.join(filesСopyFolder, file);
-    await fs.promises.copyFile(source, destination);
+    const srcFilePath = path.join(srcPath, file);
+    const destFilePath = path.join(destPath, file);
+    const fileStat = await fs.promises.stat(srcFilePath);
+
+    if (fileStat.isDirectory()) {
+      await copyFolderAsync(srcFilePath, destFilePath);
+    } else {
+      await fs.promises.copyFile(srcFilePath, destFilePath);
+    }
   }
 };
 
-copyDir();
+copyFolderAsync(assetsPath, distPathAssets);
 
