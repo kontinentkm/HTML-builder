@@ -98,9 +98,8 @@ const mergeStyles = async () => {
 
 const buildHTML = async () => {
 
-  if (!fs.existsSync(distPath)) {
-    fs.mkdirSync(distPath);
-  }
+  await copyFolderAsync(assetsPath, distPathAssets);
+
 
   const template = await readFileAsync(templatePath);
 
@@ -118,8 +117,6 @@ const buildHTML = async () => {
 
   const htmlPath = path.join(distPath, 'index.html');
   await writeFileAsync(htmlPath, html);
-
-  await copyFolderAsync(assetsPath, distPathAssets);
 
   await mergeStyles();
 };
