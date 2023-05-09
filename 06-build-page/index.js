@@ -57,6 +57,7 @@ const replaceTags = async (template, components) => {
 
 async function copyFolderAsync(srcPath, destPath) {
   try {
+    await fs.promises.rm(destPath, { recursive: true, force: true });
     await fs.promises.mkdir(destPath, { recursive: true });
 
     const files = await fs.promises.readdir(srcPath);
